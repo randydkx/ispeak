@@ -1,0 +1,18 @@
+[
+    
+    {
+        "vcName": "trainVC",
+        "title": "训练",
+        "imageName": "发音"
+    },
+    {
+        "vcName": "communityVC",
+        "title": "社区",
+        "imageName": "社区"
+    },
+    {
+        "vcName": "mineVC",
+        "title": "我的",
+        "imageName": "我的"
+    }
+]

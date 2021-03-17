@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Attention" representedClassName="Attention" syncable="YES" codeGenerationType="class">
+        <attribute name="attentionid" optional="YES" attributeType="String"/>
+        <attribute name="from_phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <attribute name="to_phoneNum" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="GiftRecord" representedClassName="GiftRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="from_phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="ischecked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="number" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="starOrDiamond" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <attribute name="to_phoneNum" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Module" representedClassName="Module" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="post_count" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Post" representedClassName="Post" syncable="YES" codeGenerationType="class">
+        <attribute name="audio_path" optional="YES" attributeType="String"/>
+        <attribute name="audio_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="cherish" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="comment" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="has_audio" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="image1_path" optional="YES" attributeType="String"/>
+        <attribute name="image2_path" optional="YES" attributeType="String"/>
+        <attribute name="module" optional="YES" attributeType="String"/>
+        <attribute name="num_of_image" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Remark" representedClassName="Remark" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="from_phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="ischecked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="postid" optional="YES" attributeType="String"/>
+        <attribute name="remarkid" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <attribute name="to_phoneNum" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Train" representedClassName="Train" syncable="YES" codeGenerationType="class">
+        <attribute name="audio" optional="YES" attributeType="String"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="num_of_duplicate" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="num_of_stop" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="problem" optional="YES" attributeType="String"/>
+        <attribute name="ratio" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="train_length" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trainTime" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="user_phoneNum" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="attention" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="avatar" optional="YES" attributeType="String"/>
+        <attribute name="diamond" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fans" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="nickname" optional="YES" attributeType="String"/>
+        <attribute name="password" optional="YES" attributeType="String"/>
+        <attribute name="phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="signature" optional="YES" attributeType="String"/>
+        <attribute name="star" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trainCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="UserAllCherish" representedClassName="UserAllCherish" syncable="YES" codeGenerationType="class">
+        <attribute name="cherishid" optional="YES" attributeType="String"/>
+        <attribute name="ischecked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="phoneNum" optional="YES" attributeType="String"/>
+        <attribute name="postid" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <attribute name="to_phoneNum" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="Attention" positionX="-252" positionY="180" width="128" height="103"/>
+        <element name="GiftRecord" positionX="-252" positionY="180" width="128" height="148"/>
+        <element name="Post" positionX="-454.51171875" positionY="110.67578125" width="128" height="238"/>
+        <element name="Remark" positionX="-252" positionY="180" width="128" height="148"/>
+        <element name="Train" positionX="-63" positionY="54" width="128" height="193"/>
+        <element name="User" positionX="139.9375" positionY="102.71484375" width="128" height="208"/>
+        <element name="UserAllCherish" positionX="-252" positionY="180" width="128" height="133"/>
+        <element name="Module" positionX="-252" positionY="180" width="128" height="73"/>
+    </elements>
+</model>
