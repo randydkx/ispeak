@@ -23,10 +23,10 @@ class Dict{
     let maxlength: Int = 40
 //    推荐列表
     var recommends: [recommend] = []
-    var sentences: [String] = repository().list
+    var sentences: [String] = repository.list
 //    句子向量
     var inputVector: [Int] = []
-    var vector: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 10), count: 30)
+    var vector: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 10), count: 100)
 //    构建语料库、初始化向量、推荐list构建
     init(input: String) {
         self.input = input
@@ -35,7 +35,7 @@ class Dict{
         for s in sentences{
             dictionary.append(s)
         }
-        vector = [[Int]](repeating: [Int](repeating: 0, count: dictionary.count), count: 26)
+        vector = [[Int]](repeating: [Int](repeating: 0, count: dictionary.count), count: 100)
         for i in 0..<dictionary.count{
             vector[i] = self.sentenceToVector(sentence: dictionary[i])
             let rec = recommend(vector: self.vector[i])
@@ -71,7 +71,13 @@ class Dict{
         }
         return ans
     }
-    func getRecommend(){
+    
+/**
+     推荐算法（算法相对简单，还有很多可以改进的余地
+     ：对于每个句子，导出一个26维的binary数组，表示这个句子有开头发音是否包含a-z,包含为1，否则为0
+     通过欧式距离衡量特征向量之间的想死关系，然后排序，取较小的几个作为推荐算法的输出。
+     */
+    func getRecommend()->[String]{
         for i in 0..<recommends.count{
             recommends[i].distance = self.distance(vector1: inputVector, vector2: recommends[i].vector)
         }
@@ -79,7 +85,11 @@ class Dict{
         for i in 0..<recommends.count{
             print(recommends[i].distance)
         }
-        print(recommends[0].sentence)
-        print(recommends[1].sentence)
+        var ret:[String]=[]
+        for i in 0..<6{
+            print(recommends[i].sentence)
+            ret.append(recommends[i].sentence)
+        }
+        return ret
     }
 }

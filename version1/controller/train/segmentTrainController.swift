@@ -89,6 +89,10 @@ class segmentTrainController: UIViewController {
         
     scrollView.frame=self.view.frame
     scrollView.contentSize=CGSize(width: self.view.frame.width, height: self.view.frame.height*1.1)
+        
+//       构建推荐模型，导出推荐文子
+        let dic = Dict.init(input: self.SpeechText)
+        self.sentences = dic.getRecommend()
 //    sentences=["高效辅助治疗口吃","希望能和大家成为朋友，希望能和大家成为朋友","别让开口成为一种恐惧","今天的天气很好，是一个做水果蛋糕的好日子","口吃者应该这样学发音","我我我我我我我我是是是是是喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵"]
     for sentence in sentences{
       addSentence(content: sentence)

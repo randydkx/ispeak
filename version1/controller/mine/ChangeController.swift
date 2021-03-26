@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import PopupKit
 
 class ChangeController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate ,UITableViewDelegate,UITableViewDataSource,CanChangeName,NSFetchedResultsControllerDelegate{
     func nameReceived(name: String) {
@@ -234,6 +235,29 @@ class ChangeController: UIViewController, UIImagePickerControllerDelegate & UINa
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
+    //    展示弹出窗口视图
+        func show_pop_up(content:String){
+            let layerView = UIView()
+            layerView.frame = CGRect(x: 19, y: 19, width: 200, height: 50)
+            layerView.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+            layerView.layer.shadowOffset = CGSize(width: 10, height: 5)
+            layerView.layer.shadowOpacity = 1
+            layerView.layer.shadowRadius = 6
+            layerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            layerView.layer.cornerRadius = 15
+            layerView.alpha = 0.8
+            
+            let label = UILabel(frame: CGRect(x: 0, y: 10, width: 200, height: 30))
+            label.text = content
+            label.textAlignment = .center
+            label.font = UIFont.systemFont(ofSize: 16)
+            label.textColor = UIColor.gray
+            layerView.addSubview(label)
+            
+            let popup = PopupView.init(contentView: layerView, showType: .bounceInFromTop, dismissType: .bounceOutToTop, maskType: .clear, shouldDismissOnBackgroundTouch: true, shouldDismissOnContentTouch: false)
+            popup.show(at: CGPoint(x: self.view.center.x, y: layerView.frame.height / 2 + 50), in: self.view, with: 1.0)
+        }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isSelected=false
 //        退出登陆
@@ -249,7 +273,14 @@ class ChangeController: UIViewController, UIImagePickerControllerDelegate & UINa
 //            delete(self.navigationController?.viewControllers[0])
 //            print("debg\(self.navigationController?.viewControllers[0].description)")
 //            self.navigationController?.viewControllers.append(con)
-            self.navigationController?.pushViewController(con, animated: true)
+            print("stack 中的所有viewcontrollers:")
+            var viewcontrollers = self.navigationController?.viewControllers
+            print(viewcontrollers?.description)
+//            var viewcontrollers = self.navigationController?.viewControllers
+            viewcontrollers?.removeAll()
+            viewcontrollers?.append(con)
+            self.navigationController?.viewControllers = viewcontrollers!
+//            self.navigationController?.pushViewController(con, animated: true)
         }
         else{
             if indexPath.row==0{

@@ -6,6 +6,7 @@ import CoreData
 import ProgressHUD
 import CameraBackground
 import SweeterSwift
+import KYWaterWaveView
 
 class StartTrainingController: UIViewController,NSFetchedResultsControllerDelegate {
 
@@ -26,6 +27,7 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
     var audioProc: audioProcessing?
 //   录音播放集成控制
     var audio_player: audioPlay?
+    
     
     @IBOutlet weak var trainTitle: UILabel!
     @IBOutlet weak var trainLabel1: UILabel!
@@ -113,10 +115,8 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
     var can_transform: Bool = false
 //    控制波浪线是否可以移动
     var can_slide: Bool = false
-//    波浪钱构成的数组
-    var list_of_wave1: [UIView] = []
-    var list_of_wave2: [UIView] = []
-    var list_of_wave3: [UIView] = []
+    
+    var wave: KYWaterWaveView?
     
     
     override func viewDidLoad() {
@@ -183,15 +183,24 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
         self.num_of_star_label.text = "星星：\(num_of_star)"
         self.num_of_diamond_label.text = "钻石：\(num_of_diamond)"
         
-        initial_wave()
-        
         let ges=UITapGestureRecognizer(target: self, action: #selector(cameraActive))
         cameraimg.isUserInteractionEnabled=true
         cameraimg.addGestureRecognizer(ges)
         cameraview.isUserInteractionEnabled=true
+        
+//       生成水波纹
+        self.wave = KYWaterWaveView.init(frame: CGRect(x: 0, y:  470 + 70, width: self.view.frame.width, height: 80))
+        wave?.waveAmplitude = 20
+        wave?.waveSpeed = 8
+        wave?.layer.opacity = 0.3
+        self.view.addSubview(wave!)
+        wave?.stop()
+        self.view.bringSubviewToFront(wave!)
+        
+//        将拍照按钮置为屏幕中最前面的图标
+        self.view.bringSubviewToFront(self.cameraimg)
     }
     @objc func cameraActive(){
-//        print("hello")
         if self.isCameraActive==false{
             self.isCameraActive=true
             self.cameraview.image=UIImage()
@@ -206,7 +215,6 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
             self.cameraview.removeCameraBackground()
             self.cameraview.image=UIImage(named: "组 1260")
             self.cameraimg.image=UIImage(named: "组 1262")
-//            self.cameraimg.contentMode = .scaleToFill
         }
     }
     func progress_show(content: String){
@@ -217,79 +225,7 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
         ProgressHUD.dismiss()
         bottomout()
     }
-//    初始化波浪线控件
-    func initial_wave(){
-//        设置水波纹
-        let wave1 = UIImageView.init(frame: CGRect(x: 0, y: 470 + 70, width: self.view.frame.width*2, height: 100))
-        wave1.image = UIImage(named: "曲线1")
-        wave1.contentMode = .scaleAspectFit
-        self.view.addSubview(wave1)
-        self.list_of_wave1.append(wave1)
-        for i in 1..<32{
-            let last_view = list_of_wave1[i-1]
-            let view = UIImageView.init(frame: CGRect(x: last_view.frame.maxX, y: last_view.frame.minY, width: self.view.frame.width*2, height: 100))
-            view.image = UIImage(named: "曲线1")
-            view.contentMode = .scaleAspectFit
-            self.list_of_wave1.append(view)
-            self.view.addSubview(view)
-        }
-        
-        let wave2 = UIImageView.init(frame: CGRect(x: -50, y: 470 + 70, width: self.view.frame.width*2, height: 100))
-        wave2.image = UIImage(named: "曲线2")
-        wave2.contentMode = .scaleAspectFit
-        self.view.addSubview(wave2)
-        self.list_of_wave2.append(wave2)
-        for i in 1..<32{
-            let last_view = list_of_wave2[i-1]
-            let view = UIImageView.init(frame: CGRect(x: last_view.frame.maxX, y: last_view.frame.minY, width: self.view.frame.width*2, height: 100))
-            view.image = UIImage(named: "曲线2")
-            view.contentMode = .scaleAspectFit
-            self.list_of_wave2.append(view)
-            self.view.addSubview(view)
-        }
-        
-        let wave3 = UIImageView.init(frame: CGRect(x: -100, y: 470 + 70, width: self.view.frame.width, height: 100))
-        wave3.image = UIImage(named: "曲线3")
-        wave3.contentMode = .scaleAspectFit
-        self.view.addSubview(wave3)
-        self.list_of_wave3.append(wave3)
-        for i in 1..<32{
-            let last_view = list_of_wave3[i-1]
-            let view = UIImageView.init(frame: CGRect(x: last_view.frame.maxX, y: last_view.frame.minY, width: self.view.frame.width*2, height: 100))
-            view.image = UIImage(named: "曲线3")
-            view.contentMode = .scaleAspectFit
-            self.list_of_wave3.append(view)
-            self.view.addSubview(view)
-        }
-        self.can_slide = true
-    }
-//    波浪线的动画效果
-    func wave_animation_on(){
-        if self.can_slide{
-            let count = CGFloat(self.list_of_wave1.count)
-            UIView.animate(withDuration: 360.0, delay: 0, options: .curveEaseOut, animations: {
-                for view in self.list_of_wave1{
-                    view.frame = CGRect(x: view.frame.minX - count * view.frame.width, y: view.frame.minY, width: view.frame.width, height: view.frame.height)
-                }
-            }, completion: {
-                (finish) in
-            })
-            
-            UIView.animate(withDuration: 240.0, delay: 0, options: .curveEaseOut, animations: {
-                for view in self.list_of_wave2{
-                    view.frame = CGRect(x: view.frame.minX - count * view.frame.width, y: view.frame.minY, width: view.frame.width, height: view.frame.height)
-                }
-            }, completion: {
-                (finish) in
-            })
-            
-            UIView.animate(withDuration: 260.0, delay: 0, options: .curveEaseOut, animations: {
-                for view in self.list_of_wave3{
-                    view.frame = CGRect(x: view.frame.minX - count * view.frame.width, y: view.frame.minY, width: view.frame.width, height: view.frame.height)
-                }
-            }, completion: nil)
-        }
-    }
+    
     func update_time_label(){
         self.total_time += 1
         var _time: String = ""
@@ -516,8 +452,6 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
 //    跳转到问题分析的详细页面
     @objc func showDetailButtonClicked(_ sender: UIButton) {
 //        更新数据库的信息
-       
-        
         let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ratingboard") as! RatingController
         print("传递：\(self.SpeechText)")
         vc.pass = self.SpeechText
@@ -543,12 +477,14 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
             listenButton.setBackgroundImage(UIImage(named: "组 1225"), for: .normal)
 //            停止播放
             audio_player?.stop_audio()
+            self.wave?.stop()
             
             self.buttom_taggle_timer?.invalidate()
             self.buttom_taggle_timer = nil
         }else{
 //            0->1开始播放录音
             audio_player?.play_audio()
+            self.wave?.wave()
 //           改变按钮的图形
             self.buttom_taggle_timer = Timer.scheduledTimer(timeInterval: TimeInterval(self.total_time), target: self, selector: #selector(toggle), userInfo: nil, repeats: false)
             listenButton.setBackgroundImage(UIImage(named: "组 1222"), for: .normal)
@@ -565,16 +501,19 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
 //    开始录音状态
     func startRecordingMode(){
         buttonStatus = 0
+        self.wave?.wave()
         recoder.setBackgroundImage(UIImage(named: "组 1232"), for: .normal)
     }
 //    暂停录音状态
     func pauseRecordingMode(){
         buttonStatus = 2
+        self.wave?.stop()
         recoder.setBackgroundImage(UIImage(named: "组 1231"), for: .normal)
     }
 //    结束录音状态
     func stopRecordingMode(){
         buttonStatus = 1
+        self.wave?.stop()
         recoder.setBackgroundImage(UIImage(named: "组 1230"), for: .normal)
     }
     
@@ -590,7 +529,6 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
             audioProc?.startRecording()
             self.can_transform = true
             self.circle_animation_on()
-            self.wave_animation_on()
         }
         else if buttonStatus == 0{
 //            正在录音状态，点击之后跳转到暂停状态
@@ -626,18 +564,7 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
         
         self.remove_line_timer()
     }
-//    删除所有的波浪线控件
-    func remove_all_wave(){
-        for view in self.list_of_wave1{
-            view.removeFromSuperview()
-        }
-        for view in self.list_of_wave2{
-            view.removeFromSuperview()
-        }
-        for view in self.list_of_wave3{
-            view.removeFromSuperview()
-        }
-    }
+
     @objc func longTapGesture(){
         if (buttonStatus == 0) || (buttonStatus == 2){
 //            跳转到结束录音状态
@@ -654,9 +581,6 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
             
 //            动画停止
             self.can_transform = false
-            
-//            移除所有的波浪线控件
-            self.remove_all_wave()
             
 //            更新训练次数信息
             self.add_user_train_count(phoneNum: (appUser?.phoneNum)!)
@@ -728,9 +652,7 @@ class StartTrainingController: UIViewController,NSFetchedResultsControllerDelega
         self.num_of_diamond = 0
         self.num_of_star_label.text = "星星：\(self.num_of_star)"
         self.num_of_diamond_label.text = "钻石：\(self.num_of_diamond)"
-        
-//        重绘波浪线
-        self.initial_wave()
+
         
         UIView.animate(withDuration: 0.5, animations: {
             self.bottomView.frame = CGRect(x:0,y:900,width:414,height: 323)
@@ -830,9 +752,6 @@ extension StartTrainingController{
     fileprivate func startRecognize(){
         //1. 停止当前任务
         stopRecognize()
-        
-//        //2. 创建音频会话
-//        audioProc = audioProcessing.init()
         
         //3. 创建识别请求
         recordRequest = SFSpeechAudioBufferRecognitionRequest()

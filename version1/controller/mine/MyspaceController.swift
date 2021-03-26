@@ -74,7 +74,11 @@ class MyspaceController: UIViewController,NSFetchedResultsControllerDelegate {
 //        self.tabBarController?.tabBar.isHidden=true
       
         whole.layer.frame.size.height=944;
-//        whole.contentSize=CGSize(width: whole.layer.frame.width, height: 1500)
+        let imageviewlist = [imageView3,imageView4,imageView5]
+        for imageview in imageviewlist{
+            imageview?.layer.cornerRadius = 20
+            imageview?.layer.masksToBounds = true
+        }
         
         btn1.titleLabel?.text="发帖记录"
         btn2.titleLabel?.text="我的收藏"
@@ -129,9 +133,9 @@ class MyspaceController: UIViewController,NSFetchedResultsControllerDelegate {
         avtar?.layer.masksToBounds = true
         
 //        左滑更换tabview
-        let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(change_view(sender:)))
-        gesture.edges = .left
-        self.view.addGestureRecognizer(gesture)
+//        let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(change_view(sender:)))
+//        gesture.edges = .left
+//        self.view.addGestureRecognizer(gesture)
     }
     
     @objc func btn1click(){
@@ -308,7 +312,6 @@ class MyspaceController: UIViewController,NSFetchedResultsControllerDelegate {
         
         let toPlaybutton = UIButton.init(frame: CGRect(x: 18, y: 10, width: 25, height: 25))
         toPlaybutton.setImage(UIImage(named: "组 1225"), for: .normal)
-        toPlaybutton.addTarget(self, action: #selector(LikeController.toPlayButtonClicked(button:)), for: .touchUpInside)
         toPlaybutton.isEnabled=true
         toPlaybutton.tag = buttonGroup.count
         print(toPlaybutton.tag)

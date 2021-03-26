@@ -130,7 +130,6 @@ class PresentController: UIViewController,NSFetchedResultsControllerDelegate {
         
         let toPlaybutton = UIButton.init(frame: CGRect(x: 18, y: 10, width: 25, height: 25))
         toPlaybutton.setImage(UIImage(named: "组 1225"), for: .normal)
-        toPlaybutton.addTarget(self, action: #selector(LikeController.toPlayButtonClicked(button:)), for: .touchUpInside)
         toPlaybutton.isEnabled=true
         toPlaybutton.tag = buttonGroup.count
         print(toPlaybutton.tag)

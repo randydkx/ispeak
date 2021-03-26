@@ -82,7 +82,10 @@ class similarRecomController: UIViewController {
         
     scrollView.frame=self.view.frame
     scrollView.contentSize=CGSize(width: self.view.frame.width, height: self.view.frame.height*1.1)
-    sentences=["我是陆宗泽","希望能和大家成为朋友希望能和大家成为朋友","我最牛逼，不接受反驳","让开口成为一种恐惧","ispeak专业口吃缓解","我我我我我我我我是是是是是喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵"]
+//       构建推荐模型，导出推荐文子
+        let dic = Dict.init(input: self.SpeechText)
+        self.sentences = dic.getRecommend()
+//    sentences=["我是陆宗泽","希望能和大家成为朋友希望能和大家成为朋友","我最牛逼，不接受反驳","让开口成为一种恐惧","ispeak专业口吃缓解","我我我我我我我我是是是是是喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵"]
     for sentence in sentences{
       addSentence(content: sentence)
     }
@@ -210,8 +213,9 @@ class similarRecomController: UIViewController {
             self.startRecognize()
 //            开始语音识别
             audioProc?.startRecording()
-//            设置定时器更新字体状态
-            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(0.2), target: self, selector: #selector(speaking_controller), userInfo: nil, repeats: true)
+//            设置定时器更新字体状态,在这里设置每0.5秒更新一下字体状态
+//            实际上应该是检测用户说话的声音然后动态改变的，草率了
+            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(speaking_controller), userInfo: nil, repeats: true)
 //            扩展面板大小
             self.spread(tag: self.focused!,flag: 1)
 //            加上水波纹，说话控制
@@ -231,11 +235,11 @@ class similarRecomController: UIViewController {
     @objc func listen_button_clicked(){
         if !islistening{
 //            开始播放录音
-            listen_button.setImage(UIImage(named: "组 1222"), for: .normal)
+            listen_button.setImage(UIImage(named: "组 1269"), for: .normal)
             listen_button.snp.remakeConstraints({
                 (maker) in
                 maker.bottom.equalToSuperview().offset(-37)
-                maker.leading.equalToSuperview().offset(44)
+                maker.leading.equalToSuperview().offset(41)
                 maker.width.equalTo(21)
                 maker.height.equalTo(23)
             })
@@ -244,6 +248,13 @@ class similarRecomController: UIViewController {
             self.speaking_timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(judge_is_ended), userInfo: self, repeats: true)
         }else{
             listen_button.setImage(UIImage(named: "多边形 12"), for: .normal)
+            listen_button.snp.remakeConstraints({
+                (maker) in
+                maker.bottom.equalToSuperview().offset(-37)
+                maker.leading.equalToSuperview().offset(44)
+                maker.width.equalTo(21)
+                maker.height.equalTo(23)
+            })
             audioPlayer?.stop_audio()
         }
         islistening = !islistening
@@ -254,6 +265,14 @@ class similarRecomController: UIViewController {
         if self.audioPlayer?.player != nil && (self.audioPlayer?.player?.isPlaying)! == false{
 //            改变图片的背景
             listen_button.setImage(UIImage(named: "多边形 12"), for: .normal)
+//            使用约束对按钮的位置进行校正
+            listen_button.snp.remakeConstraints({
+                (maker) in
+                maker.bottom.equalToSuperview().offset(-37)
+                maker.leading.equalToSuperview().offset(44)
+                maker.width.equalTo(21)
+                maker.height.equalTo(23)
+            })
         }
     }
     

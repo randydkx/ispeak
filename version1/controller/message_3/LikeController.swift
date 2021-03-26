@@ -9,21 +9,14 @@
 import UIKit
 import CoreData
 
-class LikeController: UIViewController,NSFetchedResultsControllerDelegate{
-
-    var likenum:Int=0
-    var scroll:UIScrollView?
-    var curheight:CGFloat=0
-
-    var list_of_post: [PostEntity] = []
-    var audio_player: audioPlay?
-    var current_playing_button_tag: Int?
-    var playing_timer: Timer?
-    var buttonGroup: [UIButton] = []
-    var buttonGroupState: [Int] = []
+class LikeController: UIViewController{
     
 //    所有的点赞构成的列表
     var list_of_like: [UserAllCherishEntity] = []
+//    列表视图
+    var tableView:UITableView!
+//    表格刷新框架
+    var exampleModel:ExampleModel?
     
     override func viewDidLoad() {
         
@@ -48,258 +41,403 @@ class LikeController: UIViewController,NSFetchedResultsControllerDelegate{
         self.navigationController?.navigationBar.tintColor=UIColor.black
         self.view.backgroundColor = UIColor.init(red: 239.0/255.0, green: 238.0/255.0, blue: 245.0/255.0, alpha: 1)
         
-        scroll=UIScrollView(frame: self.view.frame)
-        scroll?.contentSize=CGSize(width: self.view.frame.width, height: self.view.frame.height)
-        scroll?.backgroundColor=UIColor.white
-        self.view.addSubview(scroll!)
         
-        createItem()
-        createItem()
-        createItem()
-        createItem()
+//        创建表格视图
+        self.tableView = UITableView.init(frame: CGRect(x: 0, y: self.view.frame.minY + (self.navigationController?.navigationBar.frame.height)! + 50, width: self.view.frame.width, height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - 50))
+        
+        self.tableView.tableFooterView = UIView.init(frame: CGRect.zero)
+        self.view.addSubview(self.tableView)
+        self.exampleModel = ExampleModel.init(title: "默认", headerType: .normal, footerType: .finish)
+        self.handleTableView()
+        
+        
     }
     
+    deinit {
+        debugPrint(#function,self.classForCoder)
+    }
+    
+//    返回上一个页面，返回的同时将所以的点赞都设置成已经读过
     @objc func backToPrevious(){
         self.navigationController!.popViewController(animated: true)
+        self.set_all_read()
+    }
+}
+
+extension LikeController:NSFetchedResultsControllerDelegate{
+//    获得所有没有查看过的点赞数据
+    func get_all_like_not_view(){
+        self.list_of_like.removeAll()
+        let context = getContext()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserAllCherish")
+        fetchRequest.predicate = NSPredicate(format: "to_phoneNum=\((appUser?.phoneNum)!) and ischecked=\(false)", "")
+//        异步请求的回调函数
+        let asyncFetchRequest = NSAsynchronousFetchRequest(fetchRequest: fetchRequest){
+            (result: NSAsynchronousFetchResult!) in
+            let fetchObject = result.finalResult as! [UserAllCherish]
+            if fetchObject.count == 0{
+                print("没有任何未读点赞记录")
+            }else{
+                var count = 0
+                for c in fetchObject{
+                    count += 1
+                    
+                    let cherish = UserAllCherishEntity()
+                    cherish.cherishid = c.cherishid!
+                    cherish.ischecked = c.ischecked
+                    cherish.phoneNum = c.phoneNum!
+                    cherish.postid = c.postid!
+                    cherish.to_phoneNum = c.to_phoneNum!
+                    cherish.time = c.time!
+                    cherish.show()
+                    
+                    self.list_of_like.append(cherish)
+                }
+            }
+        }
+        do {
+            try context.execute(asyncFetchRequest)
+        }catch {
+            print("ERROR ==== 无法查找未阅读点赞消息")
+        }
+//        将likelist中的数据全部补全
+        self.impliment_like_list()
     }
     
-    func createItem(){
-        let item=UIView()
-        item.frame=CGRect(x: 0, y: self.curheight, width: self.view.frame.width, height: 360)
-        
-        createcard(view: item)
-        createavater(view: item)
-//        createline(view: item)
-        createname(view: item)
-        createdate(view: item)
-        createlabel(view: item)
-        
-        curheight+=370
-        self.scroll?.addSubview(item)
-        self.scroll?.contentSize=CGSize(width: self.view.frame.width,height: max(curheight+20,self.view.frame.height))
-    }
-    func createcard(view:UIView){
-        let img=UIImageView(frame: CGRect(x: 0, y: 80, width: self.view.frame.width, height: 280))
-        img.isUserInteractionEnabled = true
-        img.image=UIImage(named: "组 1308")
-        img.contentMode = .scaleToFill
-        view.addSubview(img)
-        view.layer.cornerRadius=15
-        view.layer.masksToBounds=true
-        createavater(view: img,x:40,y:45)
-        createname(view: img,x:90,y:45)
-        createdate(view: img,x:90,y:65)
-        createcrown(view: img)
-        createtag(view: img)
-        createtxt(view: img)
-        createaudio(view: img)
-    }
-    func createtxt(view:UIView){
-        let label=UITextView(frame: CGRect(x: 40, y: 100, width: self.view.frame.width-80, height: 90))
-        label.isEditable=false
-        label.textContainer.maximumNumberOfLines=2
-        label.textContainer.lineBreakMode = .byTruncatingTail
-        view.addSubview(label)
-        
-        let mutableString = NSMutableAttributedString(string: "认识问题是解决问题的前提，好比是去医院看病，医生会先给你做检查，然后才能对症下药，对症下药了才能继续做检查，如此循环往复，你的病就好了。", attributes: nil)
-        let space=NSMutableParagraphStyle()
-        space.lineSpacing=10
-        mutableString.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.systemGray,NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16),NSAttributedString.Key.paragraphStyle:space], range: NSRange(location: 0, length: mutableString.length))
-        label.attributedText=mutableString
-    }
-    func createaudio(view:UIView){
-        
-        let container_small = UIView(frame: CGRect(x: 30, y: 180, width: 180, height: 44))
-        
-        let long_image = UIImageView.init(frame: CGRect(x: 8, y: 4, width: 162, height: 36))
-        long_image.image = UIImage(named: "组 1221")
-        long_image.contentMode = .scaleToFill
-        container_small.addSubview(long_image)
-        
-        let toPlaybutton = UIButton.init(frame: CGRect(x: 18, y: 10, width: 25, height: 25))
-        toPlaybutton.setImage(UIImage(named: "组 1225"), for: .normal)
-        toPlaybutton.addTarget(self, action: #selector(LikeController.toPlayButtonClicked(button:)), for: .touchUpInside)
-        toPlaybutton.isEnabled=true
-        toPlaybutton.tag = buttonGroup.count
-        print(toPlaybutton.tag)
-        buttonGroup.append(toPlaybutton)
-        buttonGroupState.append(0)
-        container_small.addSubview(toPlaybutton)
-        
-        let audio_time_label = UILabel.init(frame: CGRect(x: 119, y: 17, width: 39, height: 12))
-        audio_time_label.text = int_time_transform(total_time: 92)
-        audio_time_label.font = UIFont.systemFont(ofSize: 14)
-        container_small.addSubview(audio_time_label)
-        
-        view.addSubview(container_small)
-    }
-    func createtag(view:UIView){
-        let txt=UITextView(frame: CGRect(x: 295, y: 50, width: 90, height: 30))
-        txt.backgroundColor=UIColor.clear
-        txt.textColor=UIColor.lightGray
-        txt.font=UIFont.systemFont(ofSize: 16)
-        txt.text="#自我介绍"
-        view.addSubview(txt)
-    }
-    func createcrown(view:UIView){
-        let crown=UIImageView(image: UIImage(named: "王冠"))
-        crown.frame=CGRect(x: 170, y: 50, width: 20, height: 20)
-        view.addSubview(crown)
-        let txt=UITextView(frame: CGRect(x: 195, y: 45, width: 90, height: 30))
-        txt.textColor=UIColor.orange
-        txt.font=UIFont.systemFont(ofSize: 13)
-        txt.text="口吃达人"
-        txt.isScrollEnabled = false
-        txt.isUserInteractionEnabled = false
-        view.addSubview(txt)
-    }
-    func createline(view:UIView){
-        let label=UILabel(frame: CGRect(x: 10, y: 310, width: self.view.frame.width-40, height: 1))
-        label.backgroundColor=UIColor.blue
-        view.addSubview(label)
-    }
-    func createavater(view:UIView,x:CGFloat=30,y:CGFloat=20){
-        let img=UIImageView(image: UIImage(named: "组 1227"))
-        img.frame=CGRect(x: x, y: y, width: 44, height: 44)
-        img.image = img.image?.toCircle()
-        view.addSubview(img)
-    }
-    func createname(view:UIView,x:CGFloat=80,y:CGFloat=20){
-        let label=UILabel(frame: CGRect(x: x, y: y, width: 100, height: 30))
-        label.backgroundColor=UIColor.clear
-        label.textAlignment = .left
-        label.font=UIFont.systemFont(ofSize: 16)
-        label.text="爱哭的猫"
-        view.addSubview(label)
-    }
-    func createdate(view:UIView,x:CGFloat=80,y:CGFloat=40){
-        let label=UILabel(frame: CGRect(x: x, y: y, width: 100, height: 30))
-        label.backgroundColor=UIColor.clear
-        label.textAlignment = .left
-        label.font=UIFont.systemFont(ofSize: 13)
-        label.textColor=UIColor.lightGray
-        label.text="2020-10-1"
-        view.addSubview(label)
-    }
-    func createlabel(view:UIView){
-        let label=UILabel(frame: CGRect(x: 33, y: 72, width: 150, height: 30))
-        label.backgroundColor=UIColor.clear
-        label.textAlignment = .left
-        label.font=UIFont.systemFont(ofSize: 18)
-        label.text="赞了这条帖子"
-        view.addSubview(label)
-    }
-
-    @objc func toPlayButtonClicked(button: UIButton){
-        let tag = button.tag
-        if buttonGroupState[tag] == 0 {
-        self.current_playing_button_tag = tag
-        self.playing_timer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(recover_button_status), userInfo: nil, repeats: false)
-            buttonGroup[tag].setImage(UIImage(named: "组 1222"), for: .normal)
-        }else{
-            buttonGroup[tag].setImage(UIImage(named: "组 1225"), for: .normal)
+    //    查找所有的like信息
+        func impliment_like_list(){
+            for cherish in self.list_of_like{
+//                let phoneNum = cherish.phoneNum
+                let context = getContext()
+                
+    //            同步获取user信息，查找指定的user
+                let entity: NSEntityDescription? = NSEntityDescription.entity(forEntityName: "User", in: context)
+                let request = NSFetchRequest<User>(entityName: "User")
+                request.predicate = NSPredicate(format: "phoneNum=\(cherish.phoneNum)", "")
+    //            request.fetchLimit = 1
+                request.fetchOffset = 0
+                request.entity = entity
+                do{
+                    let result:[AnyObject]? = try context.fetch(request)
+                    
+                    for c: User in result as! [User]{
+                        let user = UserEntity()
+                        user.avatar = c.avatar!
+                        user.nickname = c.nickname!
+                        cherish.from_user = user
+                    }
+                }catch{
+                    print("ERROR: ")
+                }
+    //            同步获取Post信息
+                let entity2: NSEntityDescription? = NSEntityDescription.entity(forEntityName: "Post", in: context)
+                let request2 = NSFetchRequest<Post>(entityName: "Post")
+                request2.predicate = NSPredicate(format: "id='\(cherish.postid)'", "")
+                request2.fetchOffset = 0
+                request2.entity = entity2
+                do{
+                    let result:[AnyObject]? = try context.fetch(request2)
+                    
+                    for c in result as! [Post]{
+                        let post = PostEntity()
+                        post.audio_path = (c.audio_path)!
+                        post.audio_time = Int(c.audio_time)
+                        post.cherish = Int(c.cherish)
+                        post.content = (c.content)!
+                        post.comment = Int(c.comment)
+                        post.has_audio = c.has_audio
+                        post.id = (c.id)!
+                        post.image1_path = (c.image1_path)!
+                        post.image2_path = (c.image2_path)!
+                        post.module = (c.module)!
+                        post.time = c.time!
+                        post.phoneNum = (c.phoneNum)!
+                        post.num_of_image = Int(c.num_of_image)
+                        post.user=appUser!
+                        cherish.post = post
+                    }
+                }catch{
+                    print("error")
+                }
+    //            点赞列表的长度
+                print("setupUI>>>>>>>>>>>>>>>>>>>>>\(list_of_like.count)")
+            }
         }
-        buttonGroupState[tag] = 1-buttonGroupState[tag]
-    }
-    //        恢复按钮的状态
-    @objc func recover_button_status(){
-        let tag = self.current_playing_button_tag
-        if tag != nil{
-//            停止播放录音并且恢复按钮的状态
-            audio_player?.stop_audio()
-            self.audio_player = nil
-            buttonGroup[tag!].setImage(UIImage(named: "组 1225"), for: .normal)
-//        改变按钮的状态
-            buttonGroupState[tag!] = 1-buttonGroupState[tag!]
+    
+//    设置所有的列表数据都已经被读过
+    func set_all_read(){
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
+        let context = getContext()
+        for like in self.list_of_like{
+            let cherishid = like.cherishid
+            let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "UserAllCherish")
+            fetchRequest2.predicate = NSPredicate(format: "cherishid='\(cherishid)'", "")
+
+            let asyncFetchRequest2 = NSAsynchronousFetchRequest(fetchRequest: fetchRequest2) { (result:NSAsynchronousFetchResult) in
+                //对返回的数据做处理。
+                let fetchObject = result.finalResult! as! [UserAllCherish]
+                for c in fetchObject{
+                    c.ischecked = true
+                }
+                 app.saveContext()
+            }
+           
+            do {
+                try context.save()
+                try context.execute(asyncFetchRequest2)
+            }catch{
+                let error = error as NSError
+                fatalError("错误：\(error)\n\(error.userInfo)")
+            }
+            print("一条点赞状态： 未查看=>已查看")
         }
     }
+}
 
+//tableview相关的扩展
+extension LikeController: UITableViewDelegate, UITableViewDataSource {
+//    控制数据源的数量
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.list_of_like.count
+    }
+    
+    
+//    控制每个数据源处的数据
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let identifier = "reusedCell"
+        let index = indexPath.row
+//        重新更新数据的时候使用
+        if index == 0{
+            self.impliment_like_list()
+        }
+        print("表格当前的索引：\(index)")
+        var cell:Cell_One? = tableView.dequeueReusableCell(withIdentifier: identifier) as? Cell_One
+        if cell == nil {
+            
+             cell = Cell_One.init(style: .default,like:self.list_of_like[index], reuseIdentifier: "reusedCell")
+        }
+        return cell!
+    }
+    
+//    设置高度
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 180+100+10
+    }
+    
+//    取消选中的阴影状态
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+//刷新数据
+extension LikeController {
+//    设置tableview的代理和数据源等
+    func handleTableView() {
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        guard let model = self.exampleModel else { return }
+        print("model exists")
+        self.handleTableHeader(headerType: model.headerType)
+        self.handleTableFooter(footerType: model.footerType)
+    }
+    
+//    刷新头部数据
+    @objc func loadHeaderData() {
+        print("头部-刷新中。。。。")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.tableView.myh_header?.endRefreshing { [weak self] () in
+                print("头部-自动结束刷新了")
+                self?.tableView.reloadData()
+                self?.tableView.myh_footer?.isHidden = false
+                self?.tableView.myh_footer?.resetNoMoreData()
+            }
+        }
+    }
+    
+    @objc func loadMoreData() {
+        print("尾部-刷新中。。。。")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.tableView.myh_footer?.endRefreshing { [weak self] () in
+                print("尾部-自动结束刷新了")
+                guard let strongSelf = self else { return }
+//                先更新数据源，然后刷新数据
+                self?.get_all_like_not_view()
+                strongSelf.tableView.reloadData()
+            }
+        }
+    }
+//    只能向下拖动一次进行加载数据
+    @objc func loadOnceData() {
+        print("尾部-刷新中。。。。")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.tableView.myh_footer?.endRefreshing { [weak self] () in
+                print("尾部-自动结束刷新了")
+                guard let strongSelf = self else { return }
+                strongSelf.tableView.reloadData()
+                strongSelf.tableView.myh_footer?.isHidden = true
+            }
+        }
+    }
+    @objc func loadLastData() {
+        print("尾部-刷新中。。。。")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.tableView.myh_footer?.endRefreshing { [weak self] () in
+                print("尾部-自动结束刷新了")
+                guard let strongSelf = self else { return }
+                strongSelf.tableView.reloadData()
+                strongSelf.tableView.myh_footer?.isHidden = false
+                strongSelf.tableView.myh_footer?.endRefreshingWithNoMoreData()
+            }
+        }
+    }
+}
+
+
+//刷新数据的类型
+extension LikeController {
+//    处理不同的头部刷新类型
+    func handleTableHeader(headerType: ExampleModel.HeaderType) {
+        switch headerType {
+        case .state:
+            let header = MYHRefreshStateHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            self.tableView.myh_header = header
+            break
+        case .normal:
+            self.tableView.myh_header = MYHRefreshNormalHeader.init(target: self, refreshingAction: #selector(self.loadHeaderData))
+            break
+        case .gif:
+            /// 这个建议继承，重写prepare方法
+            let header = MYHRefreshDIYAutoGifHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            self.tableView.myh_header = header
+            break
+        case .hiddenTime:
+            let header = MYHRefreshNormalHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            header.lastUpdatedTimeLabel.isHidden = true
+            header.isAutomaticallyChangeAlpha = true
+            self.tableView.myh_header = header
+            break
+        case .hiddenStateTime:
+            let header = MYHRefreshNormalHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            header.lastUpdatedTimeLabel.isHidden = true
+            header.stateLabel.isHidden = true
+            self.tableView.myh_header = header
+            break
+        case .customTitle:
+            let header = MYHRefreshNormalHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            header.setTitle("自定义-下拉刷新", state: .idle)
+            header.setTitle("自定义-释放就能刷新", state: .pulling)
+            header.setTitle("自定义-加载中", state: .refreshing)
+            header.stateLabel.textColor = UIColor.red
+            self.tableView.myh_header = header
+            break
+        case .customUI:
+            self.tableView.myh_header = MYHRefreshDIYUIHeader.init(refreshingBlock: { [weak self] () in
+                self?.loadHeaderData()
+            })
+            break
+        }
+    }
+    
+    func handleTableFooter(footerType: ExampleModel.FooterType) {
+        switch footerType {
+        
+        case .autoState:
+            let footer = MYHRefreshAutoNormalFooter.init(refreshingBlock: { [weak self] () in
+                self?.loadMoreData()
+            })
+            self.tableView.myh_footer = footer
+            break
+        case .gif:
+            self.tableView.myh_footer = MYHRefreshDIYAutoGifFooter.init(refreshingBlock: { [weak self] () in
+                self?.loadMoreData()
+            })
+            break
+        case .hiddenTitle:
+            let footer = MYHRefreshDIYAutoGifFooter.init(refreshingBlock: { [weak self] () in
+                self?.loadMoreData()
+            })
+            footer.isRefreshingTitleHidden = true
+            self.tableView.myh_footer = footer
+            break
+        case .finish:
+            self.tableView.myh_footer = MYHRefreshAutoNormalFooter.init { [weak self] () in
+                self?.loadLastData()
+            }
+            break
+        case .enableAutoLoad:
+            let footer = MYHRefreshAutoNormalFooter.init { [weak self] () in
+                self?.loadMoreData()
+            }
+            footer.isAutomaticallyRefresh = false
+            self.tableView.myh_footer = footer
+            break
+        case .customTitle:
+            let footer = MYHRefreshAutoNormalFooter.init(refreshingBlock: { [weak self] () in
+                self?.loadMoreData()
+            })
+            footer.setTitle("自定义-上拉就能刷新", state: .idle)
+            footer.setTitle("自定义-加载中", state: .refreshing)
+            footer.setTitle("自定义-没有数据了", state: .noMoreData)
+            footer.stateLabel.textColor = UIColor.red
+            self.tableView.myh_footer = footer
+            break
+        case .hiddenWhenLoad:
+            self.tableView.myh_footer = MYHRefreshAutoNormalFooter.init { [weak self] () in
+                self?.loadOnceData()
+            }
+            break
+        case .auto1:
+            self.tableView.myh_footer = MYHRefreshBackNormalFooter.init(target: self, refreshingAction: #selector(self.loadMoreData), arrowType: .black)
+            self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 30, right: 0)
+            self.tableView.myh_footer?.ignoredScrollViewContentInsetBottom = 30
+            break
+        case .auto2:
+            self.tableView.myh_footer = MYHRefreshDIYBackGifFooter.init(refreshingBlock: { [weak self] () in
+                self?.loadMoreData()
+            })
+            self.tableView.myh_footer?.isAutomaticallyChangeAlpha = true
+            break
+        case .diy1:
+            self.tableView.myh_footer = MYHRefreshDIYAutoFooter.init(target: self, refreshingAction: #selector(self.loadMoreData))
+            break
+        case .diy2:
+            self.tableView.myh_footer = MYHRefreshDIYBackFooter.init(target: self, refreshingAction: #selector(self.loadMoreData))
+            break
+        }
+    }
+}
+
+extension LikeController{
     override func viewDidAppear(_ animated: Bool) {
-        self.impliment_like_list()
+//        self.impliment_like_list()
+//        print("viewdidAppear:\(self.list_of_like.count)")
         self.navigationController?.isNavigationBarHidden = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = false
+//        self.get_all_like_not_view()
     }
     
-    func impliment_like_list(){
-        print("count: \(self.list_of_post.count)")
-        for cherish in self.list_of_like{
-            let phoneNum = cherish.phoneNum
-            let context = getContext()
-            
-//            同步获取user信息
-            let entity: NSEntityDescription? = NSEntityDescription.entity(forEntityName: "User", in: context)
-            let request = NSFetchRequest<User>(entityName: "User")
-//            request.fetchLimit = 1
-            request.fetchOffset = 0
-            request.entity = entity
-            do{
-                let result:[AnyObject]? = try context.fetch(request)
-                
-                for c: User in result as! [User]{
-                    let user = UserEntity()
-                    user.avatar = c.avatar!
-                    user.nickname = c.nickname!
-                    
-                    cherish.from_user = user
-                }
-            }catch{
-                print("ERROR: ")
-            }
-//            同步获取Post信息
-            let entity2: NSEntityDescription? = NSEntityDescription.entity(forEntityName: "Post", in: context)
-            let request2 = NSFetchRequest<Post>(entityName: "Post")
-            request2.fetchOffset = 0
-            request2.entity = entity2
-            do{
-                let result:[AnyObject]? = try context.fetch(request2)
-                
-                for c in result as! [Post]{
-                    let post = PostEntity()
-                    post.audio_path = (c.audio_path)!
-                    post.audio_time = Int(c.audio_time)
-                    post.cherish = Int(c.cherish)
-                    post.content = (c.content)!
-                    post.comment = Int(c.comment)
-                    post.has_audio = c.has_audio
-                    post.id = (c.id)!
-                    post.image1_path = (c.image1_path)!
-                    post.image2_path = (c.image2_path)!
-                    post.module = (c.module)!
-                    post.time = c.time!
-                    post.phoneNum = (c.phoneNum)!
-                    post.num_of_image = Int(c.num_of_image)
-                    
-                    cherish.post = post
-                }
-            }catch{
-                print("error")
-            }
-        }
-        
-        self.setupUI()
-    }
 
-//    渲染视图
-    func setupUI(){
-        print("setupUI>>>>>>>>>>>>>>>>>>>>>\(list_of_like.count)")
-        for cherish in self.list_of_like{
-            print(cherish.from_user?.nickname!)
-            print(cherish.from_user?.avatar!)
-            print(cherish.time)
-//MARK: todo
-        }
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
       self.navigationController?.isNavigationBarHidden =  true
-  //    self.navigationController?.isToolbarHidden = true
     }
     override func viewDidDisappear(_ animated: Bool) {
       self.navigationController?.isNavigationBarHidden =  true
-  //    self.navigationController?.isToolbarHidden = true
     }
-    
 }

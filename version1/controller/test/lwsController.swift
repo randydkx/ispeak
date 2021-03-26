@@ -7,36 +7,45 @@ import SnapKit
 class lwsController: UIViewController {
     let label1 = UILabel()
     let label2 = UILabel()
-    
+
     @IBOutlet weak var button: UIButton!
     var player:  audioPlay?
     override func viewDidLoad() {
         super.viewDidLoad()
+//
+//        SMSSDK.getVerificationCode(by: .SMS, phoneNumber: "17851093886", zone: "86", template: nil, result: {
+//            (error) in
+//            if (error == nil){
+//                print("no error")
+//            }else{
+//                print(error)
+//            }
+//        })
     
         
-        label1.backgroundColor = UIColor.blue
-        label2.backgroundColor = UIColor.red
-        self.view.addSubview(label1)
-        self.view.addSubview(label2)
-        
-        label1.snp.makeConstraints({
-            (maker) in
-            maker.height.equalTo(100)
-            maker.width.equalTo(200)
-            maker.top.equalTo(self.view.snp.top).offset(50)
-            maker.leading.equalTo(self.view).offset(20)
-        })
-        
-        label2.snp.makeConstraints({
-            (maker) in
-            maker.height.equalTo(100)
-            maker.width.equalTo(200)
-            maker.top.equalTo(label1.snp.bottom).offset(50)
-            maker.leading.equalTo(self.view).offset(20)
-        })
-        
-        button.addTarget(self, action: #selector(test), for: .touchUpInside)
-        
+//        label1.backgroundColor = UIColor.blue
+//        label2.backgroundColor = UIColor.red
+//        self.view.addSubview(label1)
+//        self.view.addSubview(label2)
+//
+//        label1.snp.makeConstraints({
+//            (maker) in
+//            maker.height.equalTo(100)
+//            maker.width.equalTo(200)
+//            maker.top.equalTo(self.view.snp.top).offset(50)
+//            maker.leading.equalTo(self.view).offset(20)
+//        })
+//
+//        label2.snp.makeConstraints({
+//            (maker) in
+//            maker.height.equalTo(100)
+//            maker.width.equalTo(200)
+//            maker.top.equalTo(label1.snp.bottom).offset(50)
+//            maker.leading.equalTo(self.view).offset(20)
+//        })
+//
+//        button.addTarget(self, action: #selector(test), for: .touchUpInside)
+//
 //        let testString: [String] =
 //        ["我我我  叫李丽丽，今年28，年龄28岁，家在山东在今后的很很很很长一段时间，内，我将  跟大家成为同事，同时非常希希希希望我我我我跟大家能成为很好的朋友。"]
 //            ["大家好，我是陆宗泽,希望能和大家成为朋友","大家好，我是陆宗宗","大大大大家好","大家家家家好"]
@@ -48,8 +57,10 @@ class lwsController: UIViewController {
 //            radio.append("\(score) ")
 //        }
 //        label.text=radio
-//        let dic = Dict.init(input: "和大家成为朋友")
-//        dic.getRecommend()
+    let dic = Dict.init(input: "今天很荣幸")
+        dic.getRecommend()
+    
+        
 //        let uuid = CFUUIDCreateString(nil, CFUUIDCreate(nil))
 //        print(String(uuid!))
         
@@ -78,7 +89,7 @@ class lwsController: UIViewController {
 //        }
     }
     @objc func start(){
-        
+
         player?.play_audio()
     }
     @objc func test(){

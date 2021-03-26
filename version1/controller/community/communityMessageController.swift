@@ -130,7 +130,6 @@ class communityMessageController: UIViewController, UITableViewDelegate, UITable
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.isSelected=false
-//        退出登陆
         if indexPath.section==1{
 //            let con=UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "contactboard")
 //            self.navigationController?.pushViewController(con, animated: true)
@@ -231,6 +230,15 @@ class communityMessageController: UIViewController, UITableViewDelegate, UITable
         self.get_all_like_not_view()
 //        获取所有评论的数据
         self.get_all_remark_not_view()
+        
+//        self.like_label.text = "\(self.num_of_like_not_view)"
+//        if self.num_of_like_not_view != 0{
+//            self.like_label.isHidden = false
+//        }else{
+//            self.like_label.isHidden = true
+//        }
+        
+        self.tableview?.reloadData()
         
         self.navigationController?.navigationBar.isHidden=true
     }

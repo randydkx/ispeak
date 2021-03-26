@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import ProgressHUD
+import PopupKit
 
 class communityTalkController:UIViewController,NSFetchedResultsControllerDelegate,UITextFieldDelegate {
 
@@ -1436,6 +1437,7 @@ class communityTalkController:UIViewController,NSFetchedResultsControllerDelegat
         if self.selected_gift == 0{
             if Int((appUser?.star)!) < self.user_defined_num{
                 alert("您的星星数量不够", current: self)
+//                show_pop_up(content: "您的星星数量不够")
             }else{
                 print("将要更改的星星数量：\(self.user_defined_num)")
     //            更改两个用户的星星数量
@@ -1463,6 +1465,7 @@ class communityTalkController:UIViewController,NSFetchedResultsControllerDelegat
         else if self.selected_gift == 1{
             if Int((appUser?.diamond)!) < self.user_defined_num{
                 alert("您的钻石数量不够", current: self)
+//                show_pop_up(content: "您的钻石数量不够")
             }else{
 //            更改用户的钻石数量
                 print("将要更改的钻石数量：\(self.user_defined_num)")
@@ -1550,6 +1553,7 @@ class communityTalkController:UIViewController,NSFetchedResultsControllerDelegat
             }
             else{
                 alert("星星的数量不够", current: self)
+//                show_pop_up(content: "星星的数量不够")
                 self.more_text.text = nil
                 set_button_color(selected: 0)
             }
@@ -1559,6 +1563,7 @@ class communityTalkController:UIViewController,NSFetchedResultsControllerDelegat
                 print("选择的数量： \(self.user_defined_num)")
             }else{
                 alert("钻石的数量不够", current: self)
+//                show_pop_up(content: "钻石的数量不够")
                 self.more_text.text = nil
                 set_button_color(selected: 0)
             }
@@ -1656,6 +1661,30 @@ class communityTalkController:UIViewController,NSFetchedResultsControllerDelegat
             let error = error as NSError
             fatalError("添加送礼物信息错误")
         }
+    }
+//    用于提示的弹出视图
+    func show_pop_up(content:String){
+        let layerView = UIView()
+        layerView.frame = CGRect(x: 19, y: 19, width: 200, height: 50)
+        layerView.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+        layerView.layer.shadowOffset = CGSize(width: 10, height: 5)
+        layerView.layer.shadowOpacity = 1
+        layerView.layer.shadowRadius = 6
+        layerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        layerView.layer.cornerRadius = 15
+        layerView.alpha = 0.8
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 10, width: 200, height: 30))
+        label.text = content
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = UIColor.gray
+        layerView.addSubview(label)
+        
+        let popup = PopupView.init(contentView: layerView, showType: .bounceInFromTop, dismissType: .bounceOutToTop, maskType: .clear, shouldDismissOnBackgroundTouch: true, shouldDismissOnContentTouch: false)
+        self.view.bringSubviewToFront(layerView)
+        popup.show(at: CGPoint(x: self.view.center.x, y: layerView.frame.height / 2 + 50), in: self.view, with: 1.0)
+        
     }
 }
 

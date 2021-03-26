@@ -83,7 +83,6 @@ class communityController: ZHFSegmentVC {
   
         
        func setupAllChildViewController(){
-//        let VC1: communityRecommendController = communityRecommendController()
         let VC1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "recommend") as! communityRecommendController
         let VC2 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "talk") as! communityTalkController
         let VC3: communityMessageController = communityMessageController()
@@ -107,13 +106,4 @@ class communityController: ZHFSegmentVC {
            }
            self.pointArr = pointMarr as! [Int]
        }
-//    @objc func updatetime(){
-////        self.tabBar.frame=CGRect(x: 0, y: 713, width: 414, height: 49)
-////        if self.tabBar.frame.minY != 813{
-////            print("minX:\(self.tabBar.frame.minX) minY:\(self.tabBar.frame.minY)")
-////            print("width:\(self.tabBar.frame.width) height:\(self.tabBar.frame.height)")
-////        }
-////        self.view.frame.size=CGSize(width: 414, height: 896)
-//        print(self.view.frame)
-//    }
 }

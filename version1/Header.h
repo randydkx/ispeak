@@ -28,5 +28,6 @@
 #import "iflyMSC/IFlyTextUnderstander.h"
 
 #import "iflyMSC/IFlySetting.h"
+#import <SMS_SDK/SMSSDK.h>
 
 #endif /* Header_h */

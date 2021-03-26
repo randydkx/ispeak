@@ -3,6 +3,7 @@
 import UIKit
 import CoreData
 import ProgressHUD
+import PopupKit
 
 class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsControllerDelegate{
 
@@ -15,6 +16,9 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
     @IBOutlet weak var loginbutton: UIButton!
     @IBOutlet weak var registerbutton: UIButton!
     var avtar:UIImageView?
+    
+//    键盘的状态
+    var isOut:Bool = false
 //    是否是从注册界面跳转过来
 
     override func viewDidLoad() {
@@ -95,12 +99,35 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
         self.keyboardWillShow()
         return true
     }
+//    展示弹出窗口视图
+    func show_pop_up(content:String){
+        let layerView = UIView()
+        layerView.frame = CGRect(x: 19, y: 19, width: 200, height: 50)
+        layerView.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+        layerView.layer.shadowOffset = CGSize(width: 10, height: 5)
+        layerView.layer.shadowOpacity = 1
+        layerView.layer.shadowRadius = 6
+        layerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        layerView.layer.cornerRadius = 15
+        layerView.alpha = 0.8
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 10, width: 200, height: 30))
+        label.text = content
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = UIColor.gray
+        layerView.addSubview(label)
+        
+        let popup = PopupView.init(contentView: layerView, showType: .bounceInFromTop, dismissType: .bounceOutToTop, maskType: .clear, shouldDismissOnBackgroundTouch: true, shouldDismissOnContentTouch: false)
+
+        popup.show(at: CGPoint(x: self.view.center.x, y: layerView.frame.height / 2 + 50), in: self.view, with: 1.0)
+    }
 //    检查用户是否存在
     @objc func check(){
         let context = getContext()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "User")
         if self.accounttextfield.text! == ""{
-            alert("账号字段不能为空", current: self)
+            show_pop_up(content:"账号字段不能为空")
             return
         }
         fetchRequest.predicate = NSPredicate(format: "phoneNum=\(self.accounttextfield.text!)", "")
@@ -109,7 +136,7 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
             (result: NSAsynchronousFetchResult!) in
             let fetchObject = result.finalResult as! [User]
             if fetchObject.count == 0{
-                alert("账号不存在", current: self)
+                self.show_pop_up(content: "账号不存在")
                 print("没有记录")
             }else{
                 for c in fetchObject{
@@ -132,7 +159,7 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
                         self.toTabController()
                     }
                     else{
-                        alert("密码错误，请重新输入！", current: self)
+                        self.show_pop_up(content: "密码错误，请重新输入")
                     }
                 }
             }
@@ -171,13 +198,21 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
     }
 
     func toTabController() {
-//        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "tabController") as! TabController
-//        tabController
+        let con = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "tabController") as! TabController
 //        vc.tabBar.frame=CGRect(x: 0, y: 813, width: 414, height: 49)
         self.dismiss(animated: true, completion: nil)
-        onlytab.dismiss(animated: true, completion: nil)
-        onlytab=TabController()
-        self.navigationController?.pushViewController(onlytab, animated: true)
+//        onlytab.dismiss(animated: true, completion: nil)
+//        onlytab=TabController()
+        self.navigationController?.popToRootViewController(animated: true)
+        var viewcontrollers = self.navigationController?.viewControllers
+        print("loginpage : \n"+viewcontrollers!.description )
+        
+//        删掉所有的viewcontroller然后加入tabcontroller，否则进入主页之后可能划动导致退到登录页面
+//        暂时还未有更好的解决方案
+        viewcontrollers?.removeAll()
+        viewcontrollers?.append(con)
+        self.navigationController?.viewControllers = viewcontrollers!
+        print(self.navigationController?.viewControllers.description)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         accounttextfield.resignFirstResponder()
@@ -187,10 +222,12 @@ class LoginController: UIViewController,UITextFieldDelegate,NSFetchedResultsCont
 //    键盘即将出现的响应事件
     func keyboardWillShow(){
         self.view.frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY-100, width: self.view.frame.width, height: self.view.frame.height)
+        self.isOut = true
     }
     
     func keyboardWillHide(){
         self.view.frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY+100, width: self.view.frame.width, height: self.view.frame.height)
+        self.isOut = false
     }
 }
 

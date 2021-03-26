@@ -99,6 +99,14 @@ class TrainViewController:UIViewController,NSFetchedResultsControllerDelegate {
     
     self.navigationController?.navigationBar.backgroundColor=UIColor.clear
 
+//    var viewcontrollers = self.navigationController?.viewControllers
+//    let last = viewcontrollers![viewcontrollers!.count - 1]
+//    viewcontrollers?.removeAll()
+//    viewcontrollers?.append(last)
+//    self.navigationController?.viewControllers = viewcontrollers!
+//    print("trainpage:\n")
+//    print(self.navigationController?.viewControllers.description)
+//    self.navigationController?.popToRootViewController(animated: true)
     
     self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 21)]
 
