@@ -82,6 +82,7 @@ class detailPostController: UIViewController,UITextFieldDelegate,UIScrollViewDel
         avatar.backgroundColor = UIColor.systemGray
         avatar.layer.cornerRadius = avatar.frame.width / 2
         avatar.layer.masksToBounds = true
+        avatar.contentMode = .scaleToFill
         avatar.image = UIImage(contentsOfFile: getImageFullPath((self.post.user?.avatar)!))
         name_label.text = (self.post.user?.nickname)!
         time_label.text = self.post.time

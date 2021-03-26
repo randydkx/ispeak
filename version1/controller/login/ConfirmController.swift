@@ -165,7 +165,7 @@ class ConfirmController: UIViewController,UITextFieldDelegate {
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
         self.verifycode = textField.text
-        print(self.verifycode)
+//        print(self.verifycode)
     }
     
     //    展示弹出窗口视图
