@@ -1,0 +1,6 @@
+framework module CameraBackground {
+  umbrella header "CameraBackground-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -16,7 +16,7 @@ class segmentTrainController: UIViewController {
   @IBOutlet weak var scrollView: UIScrollView!
     
 //    语音识别相关的控制
-    var SpeechText: String = ""
+    var SpeechText: String?
     fileprivate var recordRequest: SFSpeechAudioBufferRecognitionRequest?
     fileprivate var recordTask: SFSpeechRecognitionTask?
     fileprivate let audioEngine = AVAudioEngine()
@@ -91,8 +91,11 @@ class segmentTrainController: UIViewController {
     scrollView.contentSize=CGSize(width: self.view.frame.width, height: self.view.frame.height*1.1)
         
 //       构建推荐模型，导出推荐文子
-        let dic = Dict.init(input: self.SpeechText)
+        let dic = Dict.init(input: self.SpeechText!)
+        print("说过的话：\(self.SpeechText)")
         self.sentences = dic.getRecommend()
+        
+        print(self.sentences)
 //    sentences=["高效辅助治疗口吃","希望能和大家成为朋友，希望能和大家成为朋友","别让开口成为一种恐惧","今天的天气很好，是一个做水果蛋糕的好日子","口吃者应该这样学发音","我我我我我我我我是是是是是喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵喵"]
     for sentence in sentences{
       addSentence(content: sentence)
@@ -471,7 +474,7 @@ extension segmentTrainController{
 //最好的转写结果转化成字符串
                 text = result?.bestTranscription.formattedString ?? ""
                 self.SpeechText = text
-                print("检测："+self.SpeechText)
+                print("检测："+self.SpeechText!)
                 
                 if error != nil || result!.isFinal{
                     self.audioEngine.stop()

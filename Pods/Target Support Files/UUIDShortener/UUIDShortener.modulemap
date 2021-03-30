@@ -1,0 +1,6 @@
+framework module UUIDShortener {
+  umbrella header "UUIDShortener-umbrella.h"
+
+  export *
+  module * { export * }
+}

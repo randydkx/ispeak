@@ -1,0 +1,6 @@
+framework module KYWaterWaveView {
+  umbrella header "KYWaterWaveView-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -275,12 +275,14 @@ class RatingController: UIViewController,NSFetchedResultsControllerDelegate {
     @objc func _segmentTrain(){
         print("to segmenttrain page")
         let con = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "segmentTrain") as! segmentTrainController
-        let list: [Substring] = self.component3_1.text.split(separator: "，")
-        con.sentences.removeAll()
-        for str in list{
-            let string = String(str)
-            con.sentences.append(string)
-        }
+//        let list: [Substring] = self.component3_1.text.split(separator: "，")
+//        con.sentences.removeAll()
+//        for str in list{
+//            let string = String(str)
+//            con.sentences.append(string)
+//        }
+        let alg = Algorithm(input: self.pass)
+        con.SpeechText = String(alg.listOfDuplicated)
         self.navigationController?.pushViewController(con, animated: true)
     }
     

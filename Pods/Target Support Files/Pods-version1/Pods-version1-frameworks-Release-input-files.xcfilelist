@@ -1,0 +1,12 @@
+${PODS_ROOT}/Target Support Files/Pods-version1/Pods-version1-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/CameraBackground/CameraBackground.framework
+${BUILT_PRODUCTS_DIR}/Charts/Charts.framework
+${BUILT_PRODUCTS_DIR}/FullscreenPopGesture/FullscreenPopGesture.framework
+${BUILT_PRODUCTS_DIR}/KYWaterWaveView/KYWaterWaveView.framework
+${BUILT_PRODUCTS_DIR}/MultiToggleButton/MultiToggleButton.framework
+${BUILT_PRODUCTS_DIR}/PopupKit/PopupKit.framework
+${BUILT_PRODUCTS_DIR}/ProgressHUD/ProgressHUD.framework
+${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework
+${BUILT_PRODUCTS_DIR}/SweeterSwift/SweeterSwift.framework
+${BUILT_PRODUCTS_DIR}/UUIDShortener/UUIDShortener.framework

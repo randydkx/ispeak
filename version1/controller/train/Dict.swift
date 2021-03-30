@@ -30,6 +30,7 @@ class Dict{
 //    构建语料库、初始化向量、推荐list构建
     init(input: String) {
         self.input = input
+        self.input+="天"
         self.inputVector = self.sentenceToVector(sentence: input)
         print("inputVector: \(inputVector)")
         for s in sentences{

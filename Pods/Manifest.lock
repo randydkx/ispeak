@@ -1,0 +1,70 @@
+PODS:
+  - Alamofire (5.2.2)
+  - CameraBackground (1.6.5):
+    - CameraBackground/Resources (= 1.6.5)
+    - MultiToggleButton
+    - SweeterSwift
+  - CameraBackground/Resources (1.6.5):
+    - MultiToggleButton
+    - SweeterSwift
+  - Charts (3.6.0):
+    - Charts/Core (= 3.6.0)
+  - Charts/Core (3.6.0)
+  - FullscreenPopGesture (1.4.5)
+  - KYWaterWaveView (1.1.0)
+  - mob_smssdk (3.3.1):
+    - MOBFoundation
+  - MOBFoundation (3.2.25)
+  - MultiToggleButton (1.8.2)
+  - PopupKit (3.1.1)
+  - ProgressHUD (13.4)
+  - SnapKit (5.0.1)
+  - SweeterSwift (1.1.4)
+  - UUIDShortener (1.0.1)
+
+DEPENDENCIES:
+  - Alamofire
+  - CameraBackground
+  - Charts
+  - FullscreenPopGesture
+  - KYWaterWaveView (~> 1.1.0)
+  - mob_smssdk
+  - PopupKit (~> 3.1)
+  - ProgressHUD
+  - SnapKit (~> 5.0.0)
+  - UUIDShortener
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - CameraBackground
+    - Charts
+    - FullscreenPopGesture
+    - KYWaterWaveView
+    - mob_smssdk
+    - MOBFoundation
+    - MultiToggleButton
+    - PopupKit
+    - ProgressHUD
+    - SnapKit
+    - SweeterSwift
+    - UUIDShortener
+
+SPEC CHECKSUMS:
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  CameraBackground: 5027e88e7183ebfbf754622ad15f307893255f8b
+  Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
+  FullscreenPopGesture: 93c14b68f5fe24c43bac832f6a08b52999e2fe51
+  KYWaterWaveView: ab639bd6f41398b160b04b02441dccc20425a855
+  mob_smssdk: 5a4ea1a132ba9c883af1a469c49d2ceede592fef
+  MOBFoundation: eaeb2e9e26a4155fa931020fb275d83445da0e09
+  MultiToggleButton: d02f5deaaa431b83f1f465e95a09e41fb3b40b51
+  PopupKit: e362ed92148d831a9c38a2bc7a25893e46d64c54
+  ProgressHUD: 137a7fc677487c5581668f4490563124fb35c232
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SweeterSwift: 8a90cf3156f5a1b6f39785c479369a16633b5ea9
+  UUIDShortener: f48746e97534a065093e050eaf24264149aea4d8
+
+PODFILE CHECKSUM: 9c0b1b33d6aa301348eedfc815d43013c1173284
+
+COCOAPODS: 1.10.1

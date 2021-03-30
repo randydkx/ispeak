@@ -1,0 +1,6 @@
+framework module MultiToggleButton {
+  umbrella header "MultiToggleButton-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -251,14 +251,14 @@ class MyspaceController: UIViewController,NSFetchedResultsControllerDelegate {
         //        数量标签
         let numOfReview = UILabel(frame: CGRect(x:63,y:5,width:47,height: 21))
 //        numOfReview.text = String(post.comment)
-        numOfReview.text = "10"
+        numOfReview.text = "1"
         numOfReview.font = UIFont.systemFont(ofSize: 14)
         numOfReview.textColor = UIColor.systemGray
         bottomView.addSubview(numOfReview)
                 
         let numOfCharish = UILabel(frame: CGRect(x:150,y:5,width:47,height: 21))
 //        numOfCharish.text = String(post.cherish)
-        numOfCharish.text = "20"
+        numOfCharish.text = "2"
         numOfCharish.font = UIFont.systemFont(ofSize: 14)
         numOfCharish.textColor = UIColor.systemGray
         bottomView.addSubview(numOfCharish)

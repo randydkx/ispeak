@@ -12,6 +12,8 @@ class lwsController: UIViewController {
     var player:  audioPlay?
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor.white
+        
 //
 //        SMSSDK.getVerificationCode(by: .SMS, phoneNumber: "17851093886", zone: "86", template: nil, result: {
 //            (error) in
